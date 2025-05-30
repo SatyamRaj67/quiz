@@ -5,7 +5,12 @@ import { Geist } from "next/font/google";
 
 import { TRPCReactProvider } from "trpc/react";
 
-import { ThemeProvider } from "~/components/providers/theme-provider";
+import { ThemeProvider } from "~/components/layout/providers/theme-provider";
+import { cookies } from "next/headers";
+import { SidebarInset, SidebarProvider } from "~/components/ui/sidebar";
+import { AppSidebar } from "~/components/layout/sidebar/app-sidebar";
+import { Header } from "~/components/layout/header";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -18,9 +23,12 @@ const geist = Geist({
   variable: "--font-geist-sans",
 });
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const cookieStore = await cookies();
+  const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
+
   return (
     <html lang="en" className={`${geist.variable}`} suppressHydrationWarning>
       <body>
@@ -30,7 +38,16 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <TRPCReactProvider>{children}</TRPCReactProvider>
+          <TRPCReactProvider>
+            <SidebarProvider defaultOpen={defaultOpen}>
+              <AppSidebar variant="inset" />
+              <SidebarInset>
+                <Header />
+                <Toaster />
+                <main className="p-4">{children}</main>
+              </SidebarInset>
+            </SidebarProvider>
+          </TRPCReactProvider>
         </ThemeProvider>
       </body>
     </html>
