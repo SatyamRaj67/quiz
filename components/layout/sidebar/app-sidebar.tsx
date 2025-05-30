@@ -10,16 +10,11 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSkeleton,
 } from "../../ui/sidebar";
 import { NavMain } from "./nav-main";
-import { navData } from "~/constants/nav-data";
 import { IoRocketSharp } from "react-icons/io5";
 import { useSidebarMobile } from "~/hooks/use-mobile";
-import {
-  validateNavigationConfig,
-  type NavigationConfig,
-} from "~/lib/navigation";
+import { navData } from "~/constants/nav-data";
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   collapsible?: "offcanvas" | "icon" | "none";
@@ -32,26 +27,7 @@ export function AppSidebar({
   const pathname = usePathname();
   const { handleLinkClick } = useSidebarMobile();
 
-  const navigationData: NavigationConfig | null = React.useMemo(() => {
-    try {
-      return validateNavigationConfig(navData);
-    } catch (error) {
-      console.error("Invalid navigation configuration:", error);
-      return null;
-    }
-  }, []);
-
   const isHomeActive = React.useMemo(() => pathname === "/", [pathname]);
-
-  if (!navigationData) {
-    return (
-      <Sidebar collapsible={collapsible} {...props}>
-        <SidebarContent>
-          <SidebarMenuSkeleton showIcon />
-        </SidebarContent>
-      </Sidebar>
-    );
-  }
 
   return (
     <Sidebar collapsible={collapsible} {...props}>
@@ -65,18 +41,16 @@ export function AppSidebar({
               aria-current={isHomeActive ? "page" : undefined}
               aria-label="Go to homepage"
             >
-              <Link href={navigationData.brand.href}>
+              <Link href={"/"}>
                 <IoRocketSharp className="size-5" />
-                <span className="text-base font-semibold">
-                  {navigationData.brand.name}
-                </span>
+                <span className="text-base font-semibold">QuizCraft</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={navigationData.main} />
+        <NavMain items={navData.navMain} />
       </SidebarContent>
     </Sidebar>
   );

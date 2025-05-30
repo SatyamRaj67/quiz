@@ -11,6 +11,7 @@ import { SidebarInset, SidebarProvider } from "~/components/ui/sidebar";
 import { AppSidebar } from "~/components/layout/sidebar/app-sidebar";
 import { Header } from "~/components/layout/header";
 import { Toaster } from "sonner";
+import { ConvexClientProvider } from "~/components/layout/providers/convex--client-provider";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -38,16 +39,18 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <TRPCReactProvider>
-            <SidebarProvider defaultOpen={defaultOpen}>
-              <AppSidebar variant="inset" />
-              <SidebarInset>
-                <Header />
-                <Toaster />
-                <main className="p-4">{children}</main>
-              </SidebarInset>
-            </SidebarProvider>
-          </TRPCReactProvider>
+          <ConvexClientProvider>
+            <TRPCReactProvider>
+              <SidebarProvider defaultOpen={defaultOpen}>
+                <AppSidebar variant="inset" />
+                <SidebarInset>
+                  <Header />
+                  <Toaster />
+                  <main className="p-4">{children}</main>
+                </SidebarInset>
+              </SidebarProvider>
+            </TRPCReactProvider>
+          </ConvexClientProvider>
         </ThemeProvider>
       </body>
     </html>
